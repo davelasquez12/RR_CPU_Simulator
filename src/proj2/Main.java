@@ -6,10 +6,15 @@
 package proj2;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -29,7 +34,7 @@ public class Main
         List<DataResult> resultList = new ArrayList<>(24);
         
         //2. Read in data set from text file
-        List<Process> processQueue = loadProcessQueue();
+        LinkedList<Process> processQueue = loadProcessQueue();
         
         //3. Run RRSimulations for each context switch and each time quantum value
         for(int i = 0; i < csVals.length; i++)
@@ -39,18 +44,20 @@ public class Main
             for(int j = 0; j < timeQtms.length; j++)
             {
                 int timeQtm = timeQtms[j];
-                DataResult result = new RRSimulation(csTime, timeQtm, processQueue).execute();
+                LinkedList<Process> processQueueCopy = new LinkedList(processQueue);
+                DataResult result = new RRSimulation(csTime, timeQtm, processQueueCopy).execute();
                 resultList.add(result);
             }
         }
         
-        //4. Write data result list to text file.
+        //4. Write data in resultList to text file.
+        saveResults(resultList);
     }
     
     //Reads in times.txt, stores the times in a Process List, and returns it.
-    public static List<Process> loadProcessQueue()
+    private static LinkedList<Process> loadProcessQueue()
     {
-        List<Process> processQueue = new ArrayList<>();
+        LinkedList<Process> processQueue = new LinkedList<>();
         BufferedReader br = null;
         try
         {
@@ -85,5 +92,34 @@ public class Main
         return processQueue;
     }
     
-    //public static void executeSims(List<Process>)
+    private static void saveResults(List<DataResult> dataResults)
+    {
+        BufferedWriter writer = null;
+        try
+        {
+            writer = new BufferedWriter(
+                 new OutputStreamWriter(
+                 new FileOutputStream("dataResults.txt"), "utf-8"));
+            
+            StringBuilder strBldr = null;
+            
+            for(DataResult dataResult : dataResults)
+            {
+                strBldr = new StringBuilder();
+                strBldr.append(dataResult.getCsTime() + ",");
+                strBldr.append(dataResult.getTimeQtm() + ",");
+                strBldr.append(dataResult.getAvgWaitTime() + ",");
+                strBldr.append(dataResult.getAvgTurnArndTime());
+                writer.write(strBldr.toString());
+                writer.newLine();
+            }
+        }catch(IOException e)
+        {
+            System.out.println("Error creating file.");
+        }
+        finally{
+            try {writer.close();} catch (Exception ex) {/*ignore*/}
+        }
+        
+    }
 }

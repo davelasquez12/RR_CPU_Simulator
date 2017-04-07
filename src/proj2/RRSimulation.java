@@ -51,12 +51,49 @@ public class RRSimulation {
     public DataResult execute()
     {
         Process process;
+        double waitTimeTotal = 0, turnArndTimeTotal = 0;
+        int totalProcesses = processQueue.size();
+        double timeElapsed = 0;
+        
         while(processQueue.size() != 0)
         {
-            process = processQueue.removeFirst();
+            process = processQueue.removeFirst();   //get next process in the queue
             
+            if(process.getWaitTime() == 0)      //if true, this process is being used by the CPU for the first time, so set its wait time
+            {
+                if(timeElapsed < process.getArrivalTime())
+                {
+                    double CPUWaitingTime = process.getArrivalTime() - timeElapsed;
+                    timeElapsed += CPUWaitingTime;
+                    process.setWaitTime(timeElapsed - process.getArrivalTime());
+                }
+                else
+                {
+                    process.setWaitTime(Math.abs(timeElapsed - process.getArrivalTime()));
+                }
+                
+                waitTimeTotal += process.getWaitTime();     //update the total wait time
+            }
+        
+            if(timeQuantum < process.getSimTime())      //process did not complete within the time quantum
+            {
+                process.setSimTime(process.getSimTime() - timeQuantum);    //update remaining CPU time required by process to complete
+                processQueue.addLast(process);          //add process to end of queue
+                timeElapsed += timeQuantum;             //current process took up the entire time quantum so add that time to the timeElapsed
+            } 
+            else                                         //process completed within the time quantum
+            {
+                timeElapsed += process.getSimTime();    //since process completed, add the remaining sim time to timeElapsed
+                turnArndTimeTotal += (timeElapsed - process.getArrivalTime());
+            }
+            
+            timeElapsed += csTime;                      //add the time needed for each context switch
         }
-        return null;
+        
+        //Calculate averages
+        double avgWaitTime = waitTimeTotal / totalProcesses;
+        double avgTurnArndTime = turnArndTimeTotal / totalProcesses;
+        return new DataResult(csTime, timeQuantum, avgWaitTime, avgTurnArndTime);
     }
 
     public DataResult getDataResult() {

@@ -14,27 +14,15 @@ public class DataResult {
     private int timeQtm;
     private double avgWaitTime;
     private double avgTurnArndTime;
-    public static final int WAIT_TIME_PLOT = 0;
-    public static final int TURN_AROUND_TIME_PLOT = 1;
 
-    public DataResult(int csTime, int timeQtm, double avgTime, int plotSignal) 
+    public DataResult(int csTime, int timeQtm, double avgWaitTime, double avgTurnArndTime) 
     {
         this.csTime = csTime;
         this.timeQtm = timeQtm;
-        
-        if(plotSignal == 0)
-        {
-            this.avgWaitTime = avgTime;
-            this.avgTurnArndTime = -1;
-        }
-        else
-        {
-            this.avgWaitTime = -1;
-            this.avgTurnArndTime = avgTime;
-        }
+        this.avgWaitTime = avgWaitTime;
+        this.avgTurnArndTime = avgTurnArndTime;
     }
     
-
     public int getCsTime() {
         return csTime;
     }

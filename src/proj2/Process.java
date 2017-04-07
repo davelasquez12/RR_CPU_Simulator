@@ -17,6 +17,7 @@ public class Process {
 
     public Process(int arrivalTime, double simTime)
     {
+        waitTime = 0;
         this.arrivalTime = arrivalTime;
         this.simTime = simTime;
     }
