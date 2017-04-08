@@ -44,7 +44,7 @@ public class Main
             for(int j = 0; j < timeQtms.length; j++)
             {
                 int timeQtm = timeQtms[j];
-                LinkedList<Process> processQueueCopy = new LinkedList(processQueue);
+                LinkedList<Process> processQueueCopy = copyList(processQueue);
                 DataResult result = new RRSimulation(csTime, timeQtm, processQueueCopy).execute();
                 resultList.add(result);
             }
@@ -90,6 +90,17 @@ public class Main
         }
         
         return processQueue;
+    }
+    
+    private static LinkedList<Process> copyList(LinkedList<Process> list)
+    {
+        LinkedList<Process> listCopy = new LinkedList<>();
+        for(Process process : list)
+        {
+            listCopy.add(new Process(process));
+        }
+        
+        return listCopy;
     }
     
     private static void saveResults(List<DataResult> dataResults)

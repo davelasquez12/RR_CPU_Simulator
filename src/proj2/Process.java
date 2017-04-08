@@ -17,9 +17,17 @@ public class Process {
 
     public Process(int arrivalTime, double simTime)
     {
-        waitTime = 0;
+        waitTime = -1; turnArndTime = 0;
         this.arrivalTime = arrivalTime;
         this.simTime = simTime;
+    }
+    
+    //copy constructor
+    public Process(Process process)
+    {
+        waitTime = -1; turnArndTime = 0;
+        this.arrivalTime = process.getArrivalTime();
+        this.simTime = process.getSimTime();
     }
     
     public int getArrivalTime() {

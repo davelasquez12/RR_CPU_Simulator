@@ -59,7 +59,7 @@ public class RRSimulation {
         {
             process = processQueue.removeFirst();   //get next process in the queue
             
-            if(process.getWaitTime() == 0)      //if true, this process is being used by the CPU for the first time, so set its wait time
+            if(process.getWaitTime() == -1)      //if true, this process is being used by the CPU for the first time, so set its wait time
             {
                 if(timeElapsed < process.getArrivalTime())
                 {
